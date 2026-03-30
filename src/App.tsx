@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Rocket, 
-  Lightbulb, 
-  Users, 
-  DollarSign, 
-  Target, 
-  ArrowRight, 
-  CheckCircle2, 
-  AlertTriangle, 
-  TrendingUp, 
-  ShieldCheck, 
+import {
+  Rocket,
+  Lightbulb,
+  Users,
+  DollarSign,
+  Target,
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  TrendingUp,
+  ShieldCheck,
   Heart,
   ChevronRight,
   RefreshCw,
@@ -20,11 +20,11 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { cn } from './lib/utils';
-import type { 
-  StartupInfo, 
-  DecisionPoint, 
-  SimulationOutcome, 
-  FinalReport, 
+import type {
+  StartupInfo,
+  DecisionPoint,
+  SimulationOutcome,
+  FinalReport,
   Metrics,
   StartupStage,
   Option
@@ -115,19 +115,19 @@ export default function App() {
       const response = await fetch('/api/simulate-outcome', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          startupInfo, 
-          decision: decisionPoints[currentDecisionIndex], 
+        body: JSON.stringify({
+          startupInfo,
+          decision: decisionPoints[currentDecisionIndex],
           selectedOption: option,
           isCustom
         })
       });
       const outcome: SimulationOutcome = await response.json();
-      
+
       if ((outcome as any).error) {
         throw new Error((outcome as any).error);
       }
-      
+
       setCurrentOutcome(outcome);
       setMetrics(prev => ({
         impact: Math.min(100, Math.max(0, prev.impact + outcome.metricsDelta.impact)),
@@ -135,11 +135,11 @@ export default function App() {
         risk: Math.min(100, Math.max(0, prev.risk + outcome.metricsDelta.risk)),
         trust: Math.min(100, Math.max(0, prev.trust + outcome.metricsDelta.trust))
       }));
-      setHistory(prev => [...prev, { 
-        decision: decisionPoints[currentDecisionIndex].title, 
-        option: option.text, 
+      setHistory(prev => [...prev, {
+        decision: decisionPoints[currentDecisionIndex].title,
+        option: option.text,
         optionId: option.id,
-        outcome 
+        outcome
       }]);
       setCustomOption('');
       setStep('outcome');
@@ -162,10 +162,10 @@ export default function App() {
         trust: Math.min(100, Math.max(0, prev.trust - currentOutcome.metricsDelta.trust))
       }));
     }
-    
+
     // 2. Remove last history item
     setHistory(prev => prev.slice(0, -1));
-    
+
     // 3. Trigger new decision (this will add to history and update metrics again)
     await handleDecision(option);
   };
@@ -176,8 +176,8 @@ export default function App() {
       const response = await fetch('/api/simulate-alternatives', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          startupInfo, 
+        body: JSON.stringify({
+          startupInfo,
           decision: decisionPoints[currentDecisionIndex]
         })
       });
@@ -230,7 +230,7 @@ export default function App() {
           </div>
           <h1 className="text-xl font-bold tracking-tight uppercase italic font-serif">Startup Journey</h1>
         </div>
-        
+
         {step !== 'welcome' && step !== 'input' && (
           <div className="flex gap-8">
             <MetricItem label="Impact" value={metrics.impact} icon={<TrendingUp size={14} />} color="text-blue-600" />
@@ -244,7 +244,7 @@ export default function App() {
       <main className="max-w-4xl mx-auto py-16 px-6">
         <AnimatePresence mode="wait">
           {step === 'welcome' && (
-            <motion.div 
+            <motion.div
               key="welcome"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -258,10 +258,10 @@ export default function App() {
                 Experience the Future <br /> of Your Startup
               </h2>
               <p className="text-xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-                Simulate your journey, understand the consequences of your decisions, 
+                Simulate your journey, understand the consequences of your decisions,
                 and bridge the execution gap before you even start.
               </p>
-              <button 
+              <button
                 onClick={() => setStep('input')}
                 className="group relative inline-flex items-center gap-3 bg-[#141414] text-white px-10 py-5 rounded-2xl text-lg font-bold hover:bg-[#F27D26] transition-all duration-500 hover:scale-105 active:scale-95"
               >
@@ -272,7 +272,7 @@ export default function App() {
           )}
 
           {step === 'input' && (
-            <motion.div 
+            <motion.div
               key="input"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -286,10 +286,10 @@ export default function App() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <InputGroup label="Startup Name" icon={<Rocket size={18} />}>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={startupInfo.name}
-                    onChange={e => setStartupInfo({...startupInfo, name: e.target.value})}
+                    onChange={e => setStartupInfo({ ...startupInfo, name: e.target.value })}
                     placeholder="e.g. EcoFlow"
                     className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F27D26] outline-none transition-all"
                   />
@@ -300,11 +300,11 @@ export default function App() {
                     {(['idea', 'prototype'] as StartupStage[]).map(s => (
                       <button
                         key={s}
-                        onClick={() => setStartupInfo({...startupInfo, stage: s})}
+                        onClick={() => setStartupInfo({ ...startupInfo, stage: s })}
                         className={cn(
                           "flex-1 py-3 rounded-xl border-2 transition-all font-bold capitalize",
-                          startupInfo.stage === s 
-                            ? "bg-[#141414] text-white border-[#141414]" 
+                          startupInfo.stage === s
+                            ? "bg-[#141414] text-white border-[#141414]"
                             : "bg-white text-gray-500 border-gray-100 hover:border-gray-300"
                         )}
                       >
@@ -316,9 +316,9 @@ export default function App() {
 
                 <div className="md:col-span-2">
                   <InputGroup label="The Big Idea" icon={<Lightbulb size={18} />}>
-                    <textarea 
+                    <textarea
                       value={startupInfo.idea}
-                      onChange={e => setStartupInfo({...startupInfo, idea: e.target.value})}
+                      onChange={e => setStartupInfo({ ...startupInfo, idea: e.target.value })}
                       placeholder="What problem are you solving and how?"
                       rows={3}
                       className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F27D26] outline-none transition-all resize-none"
@@ -327,20 +327,20 @@ export default function App() {
                 </div>
 
                 <InputGroup label="Target Users" icon={<Users size={18} />}>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={startupInfo.targetUsers}
-                    onChange={e => setStartupInfo({...startupInfo, targetUsers: e.target.value})}
+                    onChange={e => setStartupInfo({ ...startupInfo, targetUsers: e.target.value })}
                     placeholder="e.g. Gen Z eco-conscious shoppers"
                     className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F27D26] outline-none transition-all"
                   />
                 </InputGroup>
 
                 <InputGroup label="Budget & Goals" icon={<Target size={18} />}>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={startupInfo.budget}
-                    onChange={e => setStartupInfo({...startupInfo, budget: e.target.value})}
+                    onChange={e => setStartupInfo({ ...startupInfo, budget: e.target.value })}
                     placeholder="e.g. $10k, reach 1000 users"
                     className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#F27D26] outline-none transition-all"
                   />
@@ -348,7 +348,7 @@ export default function App() {
               </div>
 
               <div className="flex justify-end pt-8">
-                <button 
+                <button
                   onClick={startSimulation}
                   disabled={!startupInfo.name || !startupInfo.idea || loading}
                   className="bg-[#141414] text-white px-12 py-4 rounded-xl font-bold hover:bg-[#F27D26] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
@@ -359,7 +359,7 @@ export default function App() {
               </div>
 
               {error && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-red-50 border border-red-100 p-6 rounded-2xl flex items-start gap-4"
@@ -369,8 +369,8 @@ export default function App() {
                     <div className="font-bold text-red-800">Simulation Error</div>
                     <p className="text-sm text-red-600">{error}</p>
                     <div className="text-xs text-red-400 mt-2 space-y-1">
-                      <p>Tip: If you see errors, the app will automatically try Groq, then OpenAI, then Gemini.</p>
-                      <p>Ensure your API keys (GROQ_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY) are correctly configured in the Secrets panel (Settings → Secrets).</p>
+                      <p>Tip: The simulator automatically cycles through multiple AI models to ensure high reliability.</p>
+                      <p>Ensure your API keys are correctly configured in your server environment.</p>
                     </div>
                   </div>
                 </motion.div>
@@ -379,7 +379,7 @@ export default function App() {
           )}
 
           {step === 'simulating' && (
-            <motion.div 
+            <motion.div
               key="simulating"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -405,7 +405,7 @@ export default function App() {
           )}
 
           {step === 'decision' && decisionPoints && decisionPoints[currentDecisionIndex] && (
-            <motion.div 
+            <motion.div
               key={`decision-${currentDecisionIndex}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -473,7 +473,7 @@ export default function App() {
               </div>
 
               {error && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-red-50 border border-red-100 p-6 rounded-2xl flex items-start gap-4"
@@ -482,7 +482,7 @@ export default function App() {
                   <div className="space-y-1">
                     <div className="font-bold text-red-800">Simulation Error</div>
                     <p className="text-sm text-red-600">{error}</p>
-                    <button 
+                    <button
                       onClick={() => setError(null)}
                       className="text-xs text-[#F27D26] font-bold uppercase tracking-widest mt-2 hover:underline"
                     >
@@ -495,7 +495,7 @@ export default function App() {
           )}
 
           {step === 'outcome' && currentOutcome && (
-            <motion.div 
+            <motion.div
               key="outcome"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -563,7 +563,7 @@ export default function App() {
                     What if I chose differently?
                   </h4>
                   {!alternatives && !loadingAlternatives && (
-                    <button 
+                    <button
                       onClick={fetchAlternatives}
                       className="text-xs font-bold text-[#F27D26] hover:underline uppercase tracking-widest"
                     >
@@ -593,7 +593,7 @@ export default function App() {
                           <div key={i} className="p-4 bg-gray-50 rounded-2xl space-y-3 border border-transparent hover:border-gray-200 transition-all group/alt">
                             <div className="flex justify-between items-start">
                               <div className="font-bold text-sm text-gray-800">{originalOption.text}</div>
-                              <button 
+                              <button
                                 onClick={() => handleSwitchPath(originalOption)}
                                 className="text-[10px] font-bold text-[#F27D26] hover:underline uppercase tracking-widest opacity-0 group-hover/alt:opacity-100 transition-opacity"
                               >
@@ -615,7 +615,7 @@ export default function App() {
               </div>
 
               <div className="flex justify-center pt-8">
-                <button 
+                <button
                   onClick={nextStep}
                   className="bg-[#141414] text-white px-12 py-4 rounded-xl font-bold hover:bg-[#F27D26] transition-all flex items-center gap-3"
                 >
@@ -627,7 +627,7 @@ export default function App() {
           )}
 
           {step === 'report' && finalReport && (
-            <motion.div 
+            <motion.div
               key="report"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -725,7 +725,7 @@ export default function App() {
                     </ul>
                   </section>
 
-                  <button 
+                  <button
                     onClick={() => window.location.reload()}
                     className="w-full bg-[#141414] text-white py-4 rounded-xl font-bold hover:bg-[#F27D26] transition-all flex items-center justify-center gap-3"
                   >
@@ -741,7 +741,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-[#141414]/5 py-12 px-8 text-center text-gray-400 text-sm">
-        <p>© 2026 Startup Journey Simulator. Built with Gemini AI.</p>
+        <p>© 2026 Startup Journey Simulator.</p>
       </footer>
     </div>
   );
@@ -772,7 +772,7 @@ function MetricItem({ label, value, icon, color }: { label: string; value: numbe
         {Math.round(value)}%
       </div>
       <div className="w-16 h-1 bg-gray-100 rounded-full overflow-hidden mt-1">
-        <motion.div 
+        <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
           className={cn("h-full", color.replace('text', 'bg'))}
